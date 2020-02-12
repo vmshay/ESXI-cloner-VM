@@ -8,15 +8,16 @@ Cloner ESXI servers for VSphere
   - [x] Getting VM with parameters
   - [ ] Grid view for virtual machines
   - [x] Relocating frontend to different files
-- [ ] Implement tab for cloning vm
+- [ ] Implement tab for cloning VM
+- [ ] Take snapshot for clonning VM
 - [x] Checking ESXI host to requirements before cloning
 - [x] Check ssh status
 - [x] Check SecureBoot status
 - [x] Valid script for correctly reboot 
-- [x] Implement export vm parameters for connect
+- [x] Implement export VM parameters for connect
 
-##Requirements
+## Requirements
   - VMWare.PowerCLI module
   - Posh-SHH module
   - Administrator privileges
-  - Execution policy must be "Bypass"
+  - Execution policy "Bypass"
