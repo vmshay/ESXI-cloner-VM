@@ -33,12 +33,6 @@ $TabControl.Controls.AddRange(@($LoginTab,$VMTab,$CheckTab, $CloneTab,$DebugTab)
 #Adding TabController to form
 $MainForm.Controls.add($TabControl)
 
-
-
-
-
-
-
 function DisconnectOnStart(){
 Disconnect-VIServer -Server * -Confirm:$false -ErrorAction Continue
 #cls
@@ -77,6 +71,8 @@ $ButtonConnect.Add_Click({
             $TextBoxDebug.Text += "Succesfuly connected to " + $TextboxServer.text
             $Flag_Connected = $true
             OnConnect;
+            $pools = (Get-ResourcePool | ? {$_.name -ne "Resources"}).Name
+            foreach($pool in $pools){$RecoursePools.Items.Add($pool)}
              
     }
     catch [Exception]{
@@ -123,6 +119,14 @@ try{
 $ListBoxVM.Add_click({
     if($ListBoxVM.Items.Count -ne 0){
         $SelectedVMtextBox.Text = $ListBoxVM.SelectedItem
+        $TextBox1.Text = $ListBoxVM.SelectedItem
+        $SnapshotList.Items.Clear()
+        $snapshots = Get-Snapshot -VM $SelectedVMtextBox.Text
+        $snapshots | ForEach-Object {$tmp = $SnapshotList.Items.Add($_.Name)
+        $tmp.SubItems.Add($_.Description)      
+}
+
+
     }
 })
 
@@ -130,7 +134,7 @@ $CheckSSHButton.Add_Click({
     try{
         $vm = Get-VM $SelectedVMtextBox.Text
         $ip = $vm.Guest.IPAddress[0]
-        Connect-VIServer $ip -Credential $Credential -ErrorAction Stop
+        Connect-VIServer $ip -Credential (Get-Credential) -ErrorAction Stop
         $result = Get-VMHost $ip | Get-VMHostService | ? {$_.Key -eq "TSM-SSH"}
         Disconnect-VIServer -Server $ip -Confirm:$false
         if($result.Running){$CheckSSHResult.Text = "OK"}
@@ -151,7 +155,7 @@ $CheckSecureButton.Add_Click({
     }
     catch [Exception]{
         $Exception = $_.Exception
-        $TextBoxDebug.Text += $Exception.message + "`r`n"
+        $TextBoxDebug.Text += $Exception.message
         $CheckSecureResult.Text = "Fail"
     }
 })
@@ -174,7 +178,7 @@ $CheckScriptButton.Add_Click({
         }
     catch [Exception]{
         $Exception = $_.Exception
-        $TextBoxDebug.Text += $Exception.message + "`r`n"
+        $TextBoxDebug.Text += $Exception.message
 
     }
 
@@ -184,14 +188,14 @@ $FixSSHButton.Add_Click({
     try{
         $vm = Get-VM $SelectedVMtextBox.Text
         $ip = $vm.Guest.IPAddress[0]
-        Connect-VIServer $ip -Credential $Credential -ErrorAction Stop 
+        Connect-VIServer $ip -Credential (Get-Credential) -ErrorAction Stop
         Get-VMHost $ip | Get-VMHostService | ? {$_.Key -eq "TSM-SSH"} | Start-VMHostService
         Disconnect-VIServer -Server $ip -Confirm:$false
         $CheckSSHResult.Text = "OK"
     }
     catch [Exception]{
         $Exception = $_.Exception
-        $TextBoxDebug.Text += $Exception.message + "`r`n"
+        $TextBoxDebug.Text += $Exception.message
         $CheckSecureResult.Text = "Fail"
     }
 })
@@ -208,7 +212,7 @@ $FixSecureButton.Add_Click({
     }
     catch [Exception]{
         $Exception = $_.Exception
-        $TextBoxDebug.Text += $Exception.message + "`r`n"
+        $TextBoxDebug.Text += $Exception.message
         $CheckSecureResult.Text = "Fail"
     }
 })
@@ -227,7 +231,7 @@ $FixScriptButton.Add_Click({
     }
     catch [Exception]{
         $Exception = $_.Exception
-        $TextBoxDebug.Text += $Exception.message + "`r`n"
+        $TextBoxDebug.Text += $Exception.message
     }
 })
 
