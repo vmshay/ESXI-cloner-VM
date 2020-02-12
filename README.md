@@ -21,3 +21,10 @@ Cloner ESXI servers for VSphere
   - Posh-SHH module
   - Administrator privileges
   - Execution policy "Bypass"
+  
+### Install requirements
+
+  ```
+  Install-module VMWare.PowerCLI
+  Install-module Posh-SSH
+  ```
