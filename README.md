@@ -8,7 +8,7 @@ Cloner ESXI servers for VSphere
   - [x] Getting VM with parameters
   - [ ] Grid view for virtual machines
   - [x] Relocating frontend to different files
-- [ ] Implement tab for cloning VM
+- [x] Implement tab for cloning VM
 - [ ] Take snapshot for clonning VM
 - [x] Checking ESXI host to requirements before cloning
 - [x] Check ssh status
