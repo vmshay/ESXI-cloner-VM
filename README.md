@@ -7,14 +7,18 @@ Cloner ESXI servers for VSphere
 - Get vm's with parameters
   - [x] Getting VM with parameters
   - [ ] Grid view for virtual machines
-  - [x] Relocating frontend to different files
-- [x] Implement tab for cloning VM
-- [ ] Take snapshot for clonning VM
-- [x] Checking ESXI host to requirements before cloning
+-Clonу
+  - [x] Implement tab for cloning VM
+  - [x] Grid view for snapshot list
+  - [ ] Take snapshot before clonning VM
+-Check ESXI vm to requirements before cloning
 - [x] Check ssh status
 - [x] Check SecureBoot status
-- [x] Valid script for correctly reboot 
-- [x] Implement export VM parameters for connect
+- [x] Validation script for correctly reboot
+-Export
+- [ ] Implement export VM parameters for connect
+Other
+- [x] Relocating frontend to different files
 
 ## Requirements
   - VMWare.PowerCLI module
