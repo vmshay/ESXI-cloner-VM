@@ -16,7 +16,7 @@ Cloner ESXI servers for VSphere
   - [x] Check SecureBoot status
   - [x] Validation script for correctly reboot
 - Export
-  - [ ] Implement export VM parameters for connect
+  - [ ] Implement export VM connection parameters
 - Other
   - [x] Relocating frontend to different files
 
