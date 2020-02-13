@@ -103,12 +103,12 @@ $ButtonCancel.Add_Click({
 $GetVMButton.Add_Click({
 try{
         $ListBoxVM.Items.Clear()
-        if($LinRadioButton.Checked){$tmp = (Get-VM | Where-Object {$_.Name -like "*GOLD" -and $_.Guest.GuestFamily -like "*Linux*"}).Name;$CheckTab.Enabled = $false}
-        if($WinRadioButton.Checked){$tmp = (Get-VM | Where-Object {$_.Name -like "*GOLD" -and $_.Guest.GuestFamily -like "*Windows*"}).Name;$CheckTab.Enabled = $false}
-        if($ESXRadioButton.Checked){$tmp = (Get-VM | Where-Object {$_.Name -like "*GOLD" -and $_.Guest.OSFullName -like "*ESXI*"}).Name;$CheckTab.Enabled = $true}
+        if($LinRadioButton.Checked){$vms = (Get-VM | Where-Object {$_.Name -like "*GOLD" -and $_.Guest.GuestFamily -like "*Linux*"});$CheckTab.Enabled = $false}
+        if($WinRadioButton.Checked){$vms = (Get-VM | Where-Object {$_.Name -like "*GOLD" -and $_.Guest.GuestFamily -like "*Windows*"});$CheckTab.Enabled = $false}
+        if($ESXRadioButton.Checked){$vms = (Get-VM | Where-Object {$_.Name -like "*GOLD" -and $_.Guest.OSFullName -like "*ESXI*"});$CheckTab.Enabled = $true}
 
-        foreach($vm in $tmp){
-            $ListBoxVM.Items.Add($vm)
+        $vms | ForEach-Object {$tmp = $ListBoxVM.Items.Add($_.Name)
+        $tmp.SubItems.Add($_.PowerState.ToString().Replace("Powered", ""))
         }
     }
     catch [Exception]{
@@ -118,13 +118,13 @@ try{
 })
 $ListBoxVM.Add_click({
     if($ListBoxVM.Items.Count -ne 0){
-        $SelectedVMtextBox.Text = $ListBoxVM.SelectedItem
-        $TextBox1.Text = $ListBoxVM.SelectedItem
+        $SelectedVMtextBox.Text = $ListBoxVM.SelectedItems[0].Text
+        $TextBox1.Text = $ListBoxVM.SelectedItems[0].Text
         $SnapshotList.Items.Clear()
         $snapshots = Get-Snapshot -VM $SelectedVMtextBox.Text
         $snapshots | ForEach-Object {$tmp = $SnapshotList.Items.Add($_.Name)
         $tmp.SubItems.Add($_.Description)      
-}
+        }
 
 
     }
@@ -148,10 +148,10 @@ $CheckSSHButton.Add_Click({
 })
 $CheckSecureButton.Add_Click({
     try{
-        $vm = Get-VM $SelectedVMtextBox.Text
-        $ip = $vm.Guest.IPAddress[0]
-        if(!$SelectedVMtextBox.Text.ExtensionData.Config.BootOptions.EfiSecureBootEnabled){$CheckSecureResult.Text = "OK"}
-        elseif($SelectedVMtextBox.Text.ExtensionData.Config.BootOptions.EfiSecureBootEnabled){$CheckSecureResult.Text = "Fail"}      
+        $vm = Get-VM $ListView1.SelectedItems[0].Text
+        if(!$vm.ExtensionData.Config.BootOptions.EfiSecureBootEnabled){$CheckSecureResult.Text = "OK"}
+        elseif($vm.ExtensionData.Config.BootOptions.EfiSecureBootEnabled){$CheckSecureResult.Text = "Fail"}
+  
     }
     catch [Exception]{
         $Exception = $_.Exception
@@ -162,7 +162,7 @@ $CheckSecureButton.Add_Click({
 $CheckScriptButton.Add_Click({
     try{
             $TextBoxDebug.Text += pwd;
-            $vm = Get-VM $SelectedVMtextBox.Text
+            $vm = Get-VM $ListView1.SelectedItems[0].Text
             $ip = $vm.Guest.IPAddress[0]
             $session = New-SSHSession -ComputerName $ip -Credential $Credential -AcceptKey:$true
             $output = Invoke-SSHCommand -SSHSession $session -Command "cat /etc/rc.local.d/local.sh"
@@ -183,10 +183,10 @@ $CheckScriptButton.Add_Click({
     }
 
 
-})
+}) 
 $FixSSHButton.Add_Click({
     try{
-        $vm = Get-VM $SelectedVMtextBox.Text
+        $vm = Get-VM $ListView1.SelectedItems[0].Text
         $ip = $vm.Guest.IPAddress[0]
         Connect-VIServer $ip -Credential (Get-Credential) -ErrorAction Stop
         Get-VMHost $ip | Get-VMHostService | ? {$_.Key -eq "TSM-SSH"} | Start-VMHostService
@@ -201,11 +201,12 @@ $FixSSHButton.Add_Click({
 })
 $FixSecureButton.Add_Click({
     try{
-        $vm = Get-VM $SelectedVMtextBox.Text
-        Stop-vm -vm $vm -Confirm:$false
+        $vm = Get-VM $ListView1.SelectedItems[0].Text
+        Stop-vm -vm $vm -Confirm:$false 
         $spec = New-Object VMware.Vim.VirtualMachineConfigSpec
         $spec.Firmware = [VMware.Vim.GuestOsDescriptorFirmwareType]::bios
         $boot = New-Object VMware.Vim.VirtualMachineBootOptions
+        $boot.EfiSecureBootEnabled = $false
         $spec.BootOptions = $boot
         $vm.ExtensionData.ReconfigVM($spec)
         Start-vm -VM $vm -Confirm:$false   
@@ -218,7 +219,7 @@ $FixSecureButton.Add_Click({
 })
 $FixScriptButton.Add_Click({
     try{
-        $vm = Get-VM $SelectedVMtextBox.Text
+        $vm = Get-VM $ListView1.SelectedItems[0].Text
         $ip = $vm.Guest.IPAddress[0]
         $RemotePath = "/etc/rc.local.d/"
         
@@ -234,6 +235,9 @@ $FixScriptButton.Add_Click({
         $TextBoxDebug.Text += $Exception.message
     }
 })
+
+
+
 
 DisconnectOnStart
 $MainForm.ShowDialog();
