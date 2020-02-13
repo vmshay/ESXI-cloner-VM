@@ -6,10 +6,13 @@ Cloner ESXI servers for VSphere
   - [x] Ignore TLS/SSL connections
 - Geting vm's with parameters
   - [x] Getting VM with parameters
-  - [ ] Grid view for virtual machines
+  - [x] Grid view for virtual machines
+  - [ ] Power on/off VM
 - Cloning
   - [x] Implement tab for cloning VM
-  - [x] Grid view for snapshot list
+  - [x] Grid view for snapshot list 
+  - [x] Prompt count cloning VM
+  - [x] Selected recource pool
   - [ ] Take snapshot before clonning VM
 - Checking ESXI to requirements before cloning
   - [x] Check ssh status
