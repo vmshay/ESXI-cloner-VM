@@ -1,4 +1,4 @@
-﻿#Create check Tab
+#Create check Tab
 $CheckTab = New-Object System.Windows.Forms.TabPage
 $CheckTab.Text = 'Check VM'
 $CheckTab.Enabled = $false
