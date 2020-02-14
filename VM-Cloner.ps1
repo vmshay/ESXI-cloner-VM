@@ -1,7 +1,3 @@
-
-
-
-
 <#Include forms#>
 . $WorkDir\tabs\Debug.ps1
 . $WorkDir\tabs\Login.ps1
