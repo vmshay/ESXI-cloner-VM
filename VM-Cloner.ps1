@@ -1,11 +1,6 @@
-Import-Module VMware.VimAutomation.Core
-Set-PowerCLIConfiguration -DefaultVIServerMode Multiple -Confirm:$false
-[void] [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")
-[void] [System.Reflection.Assembly]::LoadWithPartialName("System.Drawing")
-$width = 450
-$height= 250
-$Flag_Connected = $false
-$WorkDir = pwd
+
+
+
 
 <#Include forms#>
 . $WorkDir\tabs\Debug.ps1
@@ -15,10 +10,42 @@ $WorkDir = pwd
 . $WorkDir\tabs\Clone.ps1
 . $WorkDir\tabs\Debug.ps1
 
+function CheckRequirements(){
+	try{
+	Import-module posh-ssh -erroraction Stop
+	Import-module vmware.powercli -erroraction Stop
+	}
+	catch{
+	InstallRequirements	
+	}
+}
+
+function InstallRequirements(){
+	Set-PSRepository -name PsGallery -InstallationPolicy Trusted
+	install-module posh-ssh
+	Install-PackageProvider -Name NuGet -force
+	install-module vmware.powercli
+	Import-module posh-ssh -erroraction Stop
+	Import-module vmware.powercli -erroraction Stop
+}
+
+
+
+
 function Main(){
+
+Set-PowerCLIConfiguration -DefaultVIServerMode Multiple -Confirm:$false
+[void] [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")
+[void] [System.Reflection.Assembly]::LoadWithPartialName("System.Drawing")
+
+$Flag_Connected = $false
+$WorkDir = pwd
+
+
+
 $MainForm = New-Object System.Windows.Forms.Form
-$MainForm.width = $width
-$MainForm.height = $height
+$MainForm.width = 450
+$MainForm.height = 250
 $MainForm.Text="VM Cloner"
 $MainForm.FormBorderStyle="FixedDialog"
 $MainForm.MaximizeBox=$false
@@ -26,8 +53,8 @@ $MainForm.MaximizeBox=$false
 
 #Adding Tab's
 $TabControl = New-Object System.Windows.Forms.TabControl
-$TabControl.Width=$width
-$TabControl.Height=$height
+$TabControl.Width=450
+$TabControl.Height=250
 $TabControl.Controls.AddRange(@($LoginTab,$VMTab,$CheckTab, $CloneTab,$DebugTab))
 
 #Adding TabController to form
@@ -242,4 +269,5 @@ $FixScriptButton.Add_Click({
 DisconnectOnStart
 $MainForm.ShowDialog();
 }
+CheckRequirements
 Main
