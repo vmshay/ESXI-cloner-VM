@@ -8,5 +8,5 @@
 # VMware support.
 # Note: This script will not be run when UEFI secure boot is enabled.
 vim-cmd hostsvc/maintenance_mode_enter
-vim-cmd hostsvc/reset_config
+vim-cmd hostsvc/firmware/reset_config
 exit 0
